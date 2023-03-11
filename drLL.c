@@ -73,10 +73,46 @@ int ParseNumber () 			// Parsing Non Terminals and some Tokens require more
 	return val ;
 }
 
+int ParseOperator () 
+{
+	int val = token_val ;
+	MatchSymbol (T_OPERATOR) ;
+	return val ;
+}
+
+int ParseOpExpression () // TO DO: make | (E) & check that the right one is returned
+{
+	int val ;
+	int val2 ;
+	int operator ;
+
+	val = ParseNumber () ;
+	val2 = ParseNumber () ;
+
+	retrun val ;
+
+}
+
+int ParseExpression () 		
+{							
+	int val ;
+	int val2 ;
+	int operator ;
+
+	operator = ParseOperator () ;
+
+	ParseOpExpression () ;
+	
+	return val;
+}
 
 int ParseAxiom () 		
 {
-
+	int val ;
+	ParseLParen () ;
+	val = ParseExpression () ;
+	ParseRParen () ;
+	return val ;
 }
 
 
