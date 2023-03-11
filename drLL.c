@@ -86,17 +86,29 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 	int val2 ;
 	int operator ;
 
-	if (token == T_NUMBER){	
+	if (token == T_NUMBER) {	
 		
 		val = ParseNumber () ;
-		val2 = ParseNumber () ;		
-	
-	} else {
+		val2 = ParseNumber () ;	
 
+
+	} else {
+		
 		ParseLParen () ;
 		val = ParseExpression () ;
 		ParseRParen () ;
-		return val ;
+
+		if (token == T_NUMBER){
+
+			val2 = ParseNumber () ;
+
+		} else {
+
+			ParseLParen () ;
+			val2 = ParseExpression () ;
+			ParseRParen () ;
+
+		}
 
 	}
 
@@ -112,7 +124,6 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 		default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
 			    	break ;
 	}
-	
 	return val;
 
 }
@@ -120,13 +131,9 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 int ParseExpression () 		
 {							
 	int val ;
-	int val2 ;
 	int operator ;
-
 	operator = ParseOperator () ;
-
-	ParseOpExpression () ;
-	
+	val=ParseOpExpression () ;
 	return val;
 }
 

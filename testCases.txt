@@ -1,9 +1,6 @@
-(* (+ 1 2) 3) -> output
+(* (+ 1 2) 3) -> Valor 9
 //77 -> output
-//(* 3 2) -> output
-//input -> output
-//input -> output
-//input -> output
-//input -> output
-//input -> output
-//input -> output
+//(* 3 2) -> Valor 6
+//(* (+ 11 13) 2) -> Valor 48
+//(* (+ (* 2 1) 3) 4)-> Valor 20
+//(* (+ 1 5) (* 1 3)) -> Valor 18
