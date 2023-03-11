@@ -86,10 +86,34 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 	int val2 ;
 	int operator ;
 
-	val = ParseNumber () ;
-	val2 = ParseNumber () ;
+	if (token == T_NUMBER){	
+		
+		val = ParseNumber () ;
+		val2 = ParseNumber () ;		
+	
+	} else {
 
-	retrun val ;
+		ParseLParen () ;
+		val = ParseExpression () ;
+		ParseRParen () ;
+		return val ;
+
+	}
+
+	switch (operator){			// This part is for the Semantic actions
+		case '+' :  val += val2 ;
+			    	break ;
+		case '-' :  val -= val2 ;
+			    	break ;
+		case '*' :  val *= val2 ;
+			    	break ;
+		case '/' :  val /= val2 ;
+			    	break ;
+		default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+			    	break ;
+	}
+	
+	return val;
 
 }
 
