@@ -1,4 +1,4 @@
-Axioma -> Type | Equal Type Variable
+Axioma -> Type | Equal Variable Type
 Type -> (Expression) | Parametro
 Expression -> Operando OpExpression
 OpExpression -> Parametro Parametro | (Expression)
@@ -10,7 +10,7 @@ Operando -> + | - | * | / | !
 
 Simplified
 
-A -> T | Q T V
+A -> T | Q V T
 T -> (E) | P | V
 E -> O E'
 E' -> P P | (E)
@@ -19,4 +19,128 @@ P' -> V | N | P
 V -> X
 O -> + | - | * | / | !
 
-A = (1 + 2) -> ! (+ 1 2) A
+A = (1 + 2) -> ! A (+ 1 2)
+
+////////////////////////////////////////
+// int ParseNumber () 			// Parsing Non Terminals and some Tokens require more
+// {	
+	
+// 	int val;
+// 	int val2;						// complex functions
+// 	if (token == T_NUMBER) {	
+		
+// 		val = number ;	    // store number value to avoid losing it when reading
+// 		MatchSymbol (T_NUMBER) ;
+		
+// 		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+
+// 			val2 = ParseOpNumber () ;
+
+// 			switch (operator){			// This part is for the Semantic actions
+// 			case '+' :  val += val2 ;
+// 						break ;
+// 			case '-' :  val -= val2 ;
+// 						break ;
+// 			case '*' :  val *= val2 ;
+// 						break ;
+// 			case '/' :  val /= val2 ;
+// 						break ;
+// 			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest1 for operator %c\n") ;
+// 						break ;
+// 			}
+// 			return val;
+// 		}
+
+// 		return val;
+
+// 	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')) {
+		
+// 		val = ParseVariable () ;
+// 		return val;
+
+// 		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+
+// 			val2 = ParseOpNumber () ;
+
+// 			switch (operator){			// This part is for the Semantic actions
+// 			case '+' :  val += val2 ;
+// 						break ;
+// 			case '-' :  val -= val2 ;
+// 						break ;
+// 			case '*' :  val *= val2 ;
+// 						break ;
+// 			case '/' :  val /= val2 ;
+// 						break ;
+// 			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest2 for operator %c\n") ;
+// 						break ;
+// 			}
+// 			return val;
+
+// 		}
+
+// 		return val;
+
+// 	}
+// }
+
+// int ParseOpNumber () 			// Parsing Non Terminals and some Tokens require more
+// {	
+	
+// 	int val;
+// 	int operator;
+// 	int val2;						// complex functions
+// 	if (token == T_NUMBER) {	
+		
+// 		val = number ;	    // store number value to avoid losing it when reading
+// 		MatchSymbol (T_NUMBER) ;
+		
+// 		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+
+// 			val2 = ParseNumber () ;
+
+// 			switch (operator){			// This part is for the Semantic actions
+// 			case '+' :  val += val2 ;
+// 						break ;
+// 			case '-' :  val -= val2 ;
+// 						break ;
+// 			case '*' :  val *= val2 ;
+// 						break ;
+// 			case '/' :  val /= val2 ;
+// 						break ;
+// 			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest3 for operator %c\n") ;
+// 						break ;
+// 			}
+// 			return val;
+// 		}
+
+// 		return val;
+
+// 	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')) {
+		
+// 		val = ParseVariable () ;
+// 		return val;
+
+// 		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+
+// 			val2 = ParseNumber () ;
+
+// 			switch (operator){			// This part is for the Semantic actions
+// 			case '+' :  val += val2 ;
+// 						break ;
+// 			case '-' :  val -= val2 ;
+// 						break ;
+// 			case '*' :  val *= val2 ;
+// 						break ;
+// 			case '/' :  val /= val2 ;
+// 						break ;
+// 			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest4 for operator %c\n") ;
+// 						break ;
+// 			}
+// 			return val;
+
+// 		}
+
+// 		return val;
+
+// 	}
+// }
