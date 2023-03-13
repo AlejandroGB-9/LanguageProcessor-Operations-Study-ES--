@@ -2,20 +2,21 @@ Axioma -> Type | Equal Type Variable
 Type -> (Expression) | Parametro
 Expression -> Operando OpExpression
 OpExpression -> Parametro Parametro | (Expression)
-Parametro -> Numero | Variable
+Parametro -> Numero | Variable | OpParametro OpParametro
+OpParametro -> Variable | Numero | Parametro
 Variable -> Xvariable
-Operando -> + | - | * | / |
-Equal -> =
+Operando -> + | - | * | / | !
+
 
 Simplified
 
 A -> T | Q T V
-T -> (E) | P
+T -> (E) | P | V
 E -> O E'
 E' -> P P | (E)
-P -> N | V
+P -> N | V | P' P'
+P' -> V | N | P
 V -> X
-O -> + | - | * | / |
-Q -> =
+O -> + | - | * | / | !
 
-A = (1 + 2) -> = (+ 1 2) A
+A = (1 + 2) -> ! (+ 1 2) A

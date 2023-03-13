@@ -32,7 +32,7 @@ int rd_lex ()
 		return (token) ;	// returns the Token for Number
 	}
 
-	if (c == '+' || c == '-' || c == '*' || c == '/') {
+	if (c == '+' || c == '-' || c == '*' || c == '/' || c == '!') {
 		token_val = c ;
 		token = T_OPERATOR ;
 		return (token) ;
@@ -67,10 +67,127 @@ void MatchSymbol (int expected_token)
 
 
 int ParseNumber () 			// Parsing Non Terminals and some Tokens require more
-{							// complex functions
-	int val = number ;	    // store number value to avoid losing it when reading
-	MatchSymbol (T_NUMBER) ; // a second number
-	return val ;
+{	
+	
+	int val;
+	int operator;
+	int val2;						// complex functions
+	if (token == T_NUMBER) {	
+		
+		val = number ;	    // store number value to avoid losing it when reading
+		MatchSymbol (T_NUMBER) ;
+		
+		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+
+			val2 = ParseOpNumber () ;
+
+			switch (operator){			// This part is for the Semantic actions
+			case '+' :  val += val2 ;
+						break ;
+			case '-' :  val -= val2 ;
+						break ;
+			case '*' :  val *= val2 ;
+						break ;
+			case '/' :  val /= val2 ;
+						break ;
+			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+						break ;
+			}
+			return val;
+		}
+
+		return val;
+
+	} else if (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))) {
+		
+		val = ParseVariable () ;
+		return val;
+
+		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+
+			val2 = ParseOpNumber () ;
+
+			switch (operator){			// This part is for the Semantic actions
+			case '+' :  val += val2 ;
+						break ;
+			case '-' :  val -= val2 ;
+						break ;
+			case '*' :  val *= val2 ;
+						break ;
+			case '/' :  val /= val2 ;
+						break ;
+			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+						break ;
+			}
+			return val;
+
+		}
+
+		return val;
+
+	}
+}
+
+int ParseOpNumber () 			// Parsing Non Terminals and some Tokens require more
+{	
+	
+	int val;
+	int operator;
+	int val2;						// complex functions
+	if (token == T_NUMBER) {	
+		
+		val = number ;	    // store number value to avoid losing it when reading
+		MatchSymbol (T_NUMBER) ;
+		
+		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+
+			val2 = ParseNumber () ;
+
+			switch (operator){			// This part is for the Semantic actions
+			case '+' :  val += val2 ;
+						break ;
+			case '-' :  val -= val2 ;
+						break ;
+			case '*' :  val *= val2 ;
+						break ;
+			case '/' :  val /= val2 ;
+						break ;
+			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+						break ;
+			}
+			return val;
+		}
+
+		return val;
+
+	} else if (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))) {
+		
+		val = ParseVariable () ;
+		return val;
+
+		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+
+			val2 = ParseNumber () ;
+
+			switch (operator){			// This part is for the Semantic actions
+			case '+' :  val += val2 ;
+						break ;
+			case '-' :  val -= val2 ;
+						break ;
+			case '*' :  val *= val2 ;
+						break ;
+			case '/' :  val /= val2 ;
+						break ;
+			default :   rd_syntax_error (operator, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+						break ;
+			}
+			return val;
+
+		}
+
+		return val;
+
+	}
 }
 
 int ParseOperator () 
@@ -78,6 +195,11 @@ int ParseOperator ()
 	int val = token_val ;
 	MatchSymbol (T_OPERATOR) ;
 	return val ;
+}
+
+int ParseVariable ()
+{
+
 }
 
 int ParseType ()
@@ -90,17 +212,17 @@ int ParseType ()
 		ParseRParen () ;
 		return val;
 
-	} else {
+	} else if (token == T_NUMBER){
 
 		val = ParseNumber () ;
 		return val;
 
+	} else {
+
+		val = ParseVariable () ;
+		return val;
+
 	}
-}
-
-int ParseVariable ()
-{
-
 }
 
 int ParseOpExpression () // TO DO: make | (E) & check that the right one is returned
@@ -109,7 +231,7 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 	int val2 ;
 	int operator ;
 
-	if (token == T_NUMBER) {	
+	if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){	
 		
 		val = ParseNumber () ;
 		val2 = ParseNumber () ;	
@@ -121,7 +243,7 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 		val = ParseExpression () ;
 		ParseRParen () ;
 
-		if (token == T_NUMBER){
+		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
 
 			val2 = ParseNumber () ;
 
@@ -163,21 +285,20 @@ int ParseExpression ()
 int ParseAxiom () 		
 {
 	int val ;
-	char equal ;
+	char operator ;
 	char variable;
 
-	if(token == '='){
+	if(token == T_OPERATOR || token_val == '!'){
 
-		equal = token ;
+		operator = token ;
 		val = ParseType ();
-		variable = token ;
+		variable = ParseVariable () ;
+		/*Buscar variable*/
 		return val;
 
 	} else {
 
-		ParseLParen () ;
-		val = ParseExpression () ;
-		ParseRParen () ;
+		val = ParseType ();
 		return val ;
 
 	}
