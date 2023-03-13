@@ -13,6 +13,7 @@ int token_val ;		// or the arithmetic operator
 			// TO DO: Pack these variables in a struct
 
 int line_counter = 1 ;
+int *array;
 
 
 int rd_lex ()
@@ -65,6 +66,32 @@ void MatchSymbol (int expected_token)
 #define ParseRParen() 	MatchSymbol (')') ; // rather than using functions
 					// This is only useful for matching Literals
 
+int ParseIndex()
+{
+	/*Para devolver el index de la variable en el array*/
+	int ascii = token;
+	if (ascii>=65 || ascii <= 90)
+	{
+		/*Letras mayusculas*/
+		int posicion = ascii - 65;
+		return posicion;
+	}
+	else if (ascii>=97 || ascii <= 122)
+	{
+		/*Letras mayusculas*/
+		int posicion = ascii - 97 + 26;
+		printf("Posicion = %d\n",posicion);
+		return posicion;
+	}
+}
+
+int ParseVariable ()
+{
+	/*Para devolver el valor de una variable*/
+	int pos = ParseIndex();
+	int val = array[pos];
+	return val;
+}
 
 int ParseNumber () 			// Parsing Non Terminals and some Tokens require more
 {	
@@ -77,7 +104,7 @@ int ParseNumber () 			// Parsing Non Terminals and some Tokens require more
 		val = number ;	    // store number value to avoid losing it when reading
 		MatchSymbol (T_NUMBER) ;
 		
-		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
 			val2 = ParseOpNumber () ;
 
@@ -98,12 +125,12 @@ int ParseNumber () 			// Parsing Non Terminals and some Tokens require more
 
 		return val;
 
-	} else if (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))) {
+	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')) {
 		
 		val = ParseVariable () ;
 		return val;
 
-		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
 			val2 = ParseOpNumber () ;
 
@@ -139,7 +166,7 @@ int ParseOpNumber () 			// Parsing Non Terminals and some Tokens require more
 		val = number ;	    // store number value to avoid losing it when reading
 		MatchSymbol (T_NUMBER) ;
 		
-		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
 			val2 = ParseNumber () ;
 
@@ -160,12 +187,12 @@ int ParseOpNumber () 			// Parsing Non Terminals and some Tokens require more
 
 		return val;
 
-	} else if (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))) {
+	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')) {
 		
 		val = ParseVariable () ;
 		return val;
 
-		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
 			val2 = ParseNumber () ;
 
@@ -197,10 +224,6 @@ int ParseOperator ()
 	return val ;
 }
 
-int ParseVariable ()
-{
-
-}
 
 int ParseType ()
 {
@@ -225,13 +248,13 @@ int ParseType ()
 	}
 }
 
-int ParseOpExpression () // TO DO: make | (E) & check that the right one is returned
+int ParseOpExpression ()
 {
 	int val ;
 	int val2 ;
 	int operator ;
 
-	if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){	
+	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){	
 		
 		val = ParseNumber () ;
 		val2 = ParseNumber () ;	
@@ -243,7 +266,7 @@ int ParseOpExpression () // TO DO: make | (E) & check that the right one is retu
 		val = ParseExpression () ;
 		ParseRParen () ;
 
-		if (token == T_NUMBER || (type(token) == char && ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')))){
+		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
 			val2 = ParseNumber () ;
 
@@ -286,14 +309,16 @@ int ParseAxiom ()
 {
 	int val ;
 	char operator ;
-	char variable;
+	int index;
 
-	if(token == T_OPERATOR || token_val == '!'){
+	if(token == T_OPERATOR && token_val == '!'){
 
 		operator = token ;
 		val = ParseType ();
-		variable = ParseVariable () ;
-		/*Buscar variable*/
+		index = ParseIndex () ;
+		printf("Index= %d\n", index);
+		array[index] = val;
+		printf("Array= %d\n", array[index]);
 		return val;
 
 	} else {
@@ -307,11 +332,12 @@ int ParseAxiom ()
 
 int main (void)
 {
-
+	array=(int*)malloc(52 * sizeof(int)); /*52 porque tenemos 52 posibles variables*/
 	while (1) {
 		rd_lex () ;
         printf ("Valor %d\n", ParseAxiom ()) ;
 	}	
 	
 	system ("PAUSE") ;
+	free(array);
 }
