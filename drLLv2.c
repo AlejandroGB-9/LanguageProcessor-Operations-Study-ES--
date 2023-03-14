@@ -74,12 +74,14 @@ int ParseIndex()
 	{
 		/*Letras mayusculas*/
 		int posicion = ascii - 65;
+		rd_lex () ;
 		return posicion;
 	}
 	else if (ascii>=97 || ascii <= 122)
 	{
 		/*Letras mayusculas*/
 		int posicion = ascii - 97 + 26;
+		rd_lex () ;
 		return posicion;
 	}
 }
@@ -89,7 +91,6 @@ int ParseVariable ()
 	/*Para devolver el valor de una variable*/
 	int pos = ParseIndex();
 	int val = array[pos];
-	rd_lex () ;
 	return val;
 }
 
@@ -206,7 +207,8 @@ int ParseOpExpression ()
 
 		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
-			val2 = ParseNumber () ;
+			maxOp = operator ;
+			val2 = ParseCollection () ;
 
 		} else {
 
@@ -253,7 +255,6 @@ int ParseAxiom ()
 	if(token == T_OPERATOR && token_val == '!'){
 		ParseOperator () ;
 		index = ParseIndex () ;
-		rd_lex () ;
 		val = ParseType ();
 		array[index] = val;
 		return val;
