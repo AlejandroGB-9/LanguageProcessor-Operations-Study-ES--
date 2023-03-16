@@ -1,3 +1,5 @@
+/*Lucas Gallego Bravo & Alejandro García Berrocal - Grupo 12*/
+/*100429005@alumnos.uc3m.es 100451059@alumnos.uc3m.es*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
