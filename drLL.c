@@ -87,7 +87,14 @@ int SearchIndex()
 	}
 }
 
-int ParseVariable ()
+int ParseVariable () //V::=a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
+{
+	/*Funcion que devuelve el valor de la variable leida*/
+	int val;
+	int pos = SearchIndex(); //Primero se obtiene el index de la variable
+	val = array[pos];	//Una vez obetenido el index se obtiene el valor de esa variable en el array
+	return val;
+}
 {
 	/*Esta funcion devuelve el valor de una variable en el array*/
 	int pos = SearchIndex(); //Primero se obtiene el index de la variable
@@ -95,7 +102,7 @@ int ParseVariable ()
 	return val;
 }
 
-int ParseNumber()
+int ParseNumber() //N::=0|1|2|3|4|5|6|7|8|9....
 {
 	/*Funcion que devuelve el valor del numero leido*/
 	int val;
@@ -106,7 +113,7 @@ int ParseNumber()
 }
 
 int ParseType ()
-{
+{ /*Utiliza en el axioma. Para dar a la gramática T::=N|V|(E) */
 	int val;
 	if (token == '(') {
 
@@ -130,6 +137,8 @@ int ParseType ()
 
 int ParseParameter (int op)
 {
+	/*Funcion que devuelve el valor de un parametro*/
+	// P::=NP|VP|(E)P|lambda
 	int val;
 	int val2;
 	if (token == T_NUMBER){
@@ -173,6 +182,8 @@ int ParseParameter (int op)
 
 int ParseOperator () 
 {
+	/*Funcion que devuelve el valor del operador leido*/
+	// O::=+|-|*|/
 	int val = token_val ;
 	MatchSymbol (T_OPERATOR) ;
 	return val ;
@@ -181,6 +192,8 @@ int ParseOperator ()
 
 int ParseOpExpression ()
 {
+	/*Funcion que devuelve el valor de una expresion con operador*/
+	// H::=(E)P|NP|VP
 	int val ;
 	int val2 ;
 	int operator ;
@@ -220,7 +233,9 @@ int ParseOpExpression ()
 }
 
 int ParseExpression () 		
-{				
+{		
+	/*Funcion que devuelve el valor de una expresion*/
+	// E::=OH|!VT
 	int val ;
 	int index;
 	int operator ;
@@ -241,6 +256,8 @@ int ParseExpression ()
 
 int ParseAxiom () 		
 {
+	/*Funcion que devuelve el valor de un axioma*/
+	// A::=N|V|(E)|!VT
 	int val ;
 	int index;
 
