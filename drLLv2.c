@@ -21,6 +21,7 @@ int rd_lex ()
 	
 	do {
 		c = getchar () ;
+		printf("%d\n", c);
 		if (c == '\n')
 			line_counter++ ;	// info for rd_syntax_error()
 	} while (c == ' ' || c == '\t' || c == '\r') ;
@@ -93,14 +94,23 @@ int ParseVariable ()
 	return val;
 }
 
-int ParseNumber ()
+int ParseNumber()
+{
+
+	int val;
+	val = number ;	    // store number value to avoid losing it when reading
+	MatchSymbol (T_NUMBER) ;
+	return val;
+
+}
+
+int ParseTerm ()
 {
 	int val;
 	
 	if (token == T_NUMBER) {	
 		
-		val = number ;	    // store number value to avoid losing it when reading
-		MatchSymbol (T_NUMBER) ;
+		val = ParseNumber () ;
 		return val;
 
 	} else {
@@ -122,14 +132,9 @@ int ParseType ()
 		ParseRParen () ;
 		return val;
 
-	} else if (token == T_NUMBER){
+	} else if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
-		val = ParseNumber () ;
-		return val;
-
-	} else {
-
-		val = ParseVariable () ;
+		val = ParseTerm () ;
 		return val;
 
 	}
@@ -143,7 +148,7 @@ int ParseCollection (int op)
 
 	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
-		val = ParseNumber () ;
+		val = ParseTerm () ;
 
 	} else {
 
@@ -160,7 +165,7 @@ int ParseCollection (int op)
 
 		} else if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
 
-			val2 = ParseNumber () ;
+			val2 = ParseTerm () ;
 
 		} else {
 
@@ -203,7 +208,7 @@ int ParseOpExpression ()
 
 	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){	
 		
-		val = ParseNumber () ;
+		val = ParseTerm () ;
 		val2 = ParseCollection (operator) ;	
 		printf("%d\n", val) ;
 		printf("%d\n", val2) ;
@@ -266,12 +271,24 @@ int ParseAxiom ()
 }
 
 
-int main (void)
+int main (int argc, char *argv[])
 {
 	array=(int*)malloc(52 * sizeof(int)); /*52 porque tenemos 52 posibles variables*/
-	while (1) {
-		rd_lex () ;
-        printf ("Valor %d\n", ParseAxiom ()) ;
+	if (argc == 2){
+		
+		freopen(argv[1], "r", stdin);
+		while (1) {
+			rd_lex () ;
+			printf ("Valor %d\n", ParseAxiom ()) ;
+		}
+
+	} else {
+
+		while (1) {
+			rd_lex () ;
+			printf ("Valor %d\n", ParseAxiom ()) ;
+		}
+
 	}	
 	
 	system ("PAUSE") ;
