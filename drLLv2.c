@@ -14,7 +14,6 @@ int token_val ;		// or the arithmetic operator
 
 int line_counter = 1 ;
 int *array;
-int maxOp;
 
 int rd_lex ()
 {
@@ -113,54 +112,6 @@ int ParseNumber ()
 
 }
 
-int ParseCollection ()
-{
-
-	int val;
-	int val2;
-
-	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
-
-		val = ParseNumber () ;
-
-	}
-
-	while(1){
-		if (token == '\n' || token == ')'){
-			printf("%d\n FIN", val) ;
-			return val;
-
-		} else if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
-
-			val2 = ParseNumber () ;
-
-		}
-
-		switch (maxOp){			// This part is for the Semantic actions
-		case '+' :  val -= val2 ;
-			    	break ;
-		case '-' :  val += val2 ;
-			    	break ;
-		case '*' :  val /= val2 ;
-			    	break ;
-		case '/' :  val *= val2 ;
-			    	break ;
-		default :   rd_syntax_error (maxOp, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
-			    	break ;
-		}
-
-		printf("%d\n", val) ;
-	}
-}
-
-int ParseOperator () 
-{
-	int val = token_val ;
-	MatchSymbol (T_OPERATOR) ;
-	return val ;
-}
-
-
 int ParseType ()
 {
 	int val;
@@ -184,31 +135,32 @@ int ParseType ()
 	}
 }
 
-int ParseOpExpression ()
+int ParseCollection (int op)
 {
-	int val ;
-	int val2 ;
-	int operator ;
 
-	maxOp = operator ;
+	int val;
+	int val2;
 
-	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){	
-		
+	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+
 		val = ParseNumber () ;
-		val2 = ParseCollection () ;	
-		printf("%d\n", val) ;
-		printf("%d\n", val2) ;
 
 	} else {
-		
+
 		ParseLParen () ;
 		val = ParseExpression () ;
 		ParseRParen () ;
 
-		if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+	}
 
-			maxOp = operator ;
-			val2 = ParseCollection () ;
+	while(1){
+		if (token == '\n' || token == ')'){
+			printf("%d FIN \n", val) ;
+			return val;
+
+		} else if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+
+			val2 = ParseNumber () ;
 
 		} else {
 
@@ -217,6 +169,52 @@ int ParseOpExpression ()
 			ParseRParen () ;
 
 		}
+
+		switch (op){			// This part is for the Semantic actions
+		case '+' :  val += val2 ;
+			    	break ;
+		case '-' :  val += val2 ;
+			    	break ;
+		case '*' :  val *= val2 ;
+			    	break ;
+		case '/' :  val *= val2 ;
+			    	break ;
+		default :   rd_syntax_error (op, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+			    	break ;
+		}
+
+		printf("%d\n", val) ;
+	}
+}
+
+int ParseOperator () 
+{
+	int val = token_val ;
+	MatchSymbol (T_OPERATOR) ;
+	return val ;
+}
+
+
+int ParseOpExpression ()
+{
+	int val ;
+	int val2 ;
+	int operator ;
+
+	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){	
+		
+		val = ParseNumber () ;
+		val2 = ParseCollection (operator) ;	
+		printf("%d\n", val) ;
+		printf("%d\n", val2) ;
+
+	} else {
+		
+		ParseLParen () ;
+		val = ParseExpression () ;
+		ParseRParen () ;
+		val2 = ParseCollection (operator) ;
+
 
 	}
 
