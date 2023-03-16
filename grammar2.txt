@@ -14,7 +14,7 @@ A -> Y | Q V Y
 Y -> (E) | T
 E -> O E'
 E' -> P P | (E)
-P -> T | (E) | T P' | (E) P'|lambda
+P -> T | (E) | T P' | (E) P'| lambda
 P' -> T | (E) | T P | (E) P | lambda
 T -> N | V
 O -> + | - | * | / | !
