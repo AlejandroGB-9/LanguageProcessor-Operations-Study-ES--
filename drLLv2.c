@@ -6,6 +6,7 @@
 #define T_OPERATOR	1002		
 
 int ParseExpression () ;		// Prototype for forward reference
+int ParseParameter (int op) ;		// Prototype for forward reference
 
 int token ;		// Here we store the current token/literal 
 int number ;		// the value of the number 
@@ -21,7 +22,7 @@ int rd_lex ()
 	
 	do {
 		c = getchar () ;
-		printf("%d\n", c);
+		// printf("%d\n", c);
 		if (c == '\n')
 			line_counter++ ;	// info for rd_syntax_error()
 	} while (c == ' ' || c == '\t' || c == '\r') ;
@@ -140,56 +141,60 @@ int ParseType ()
 	}
 }
 
-int ParseCollection (int op)
+int ParseOpParameter (int op)
 {
-
 	int val;
 	int val2;
+	val = ParseType () ;
+	if (token == '\n' || token == ')'){
 
-	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
-
-		val = ParseTerm () ;
+		return val;
 
 	} else {
-
-		ParseLParen () ;
-		val = ParseExpression () ;
-		ParseRParen () ;
-
-	}
-
-	while(1){
-		if (token == '\n' || token == ')'){
-			printf("%d FIN \n", val) ;
-			return val;
-
-		} else if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
-
-			val2 = ParseTerm () ;
-
-		} else {
-
-			ParseLParen () ;
-			val2 = ParseExpression () ;
-			ParseRParen () ;
-
+		val2 = ParseParameter (op) ;
+		switch (op){			
+			case '+' :  val += val2 ;
+						break ;
+			case '-' :  val += val2 ;
+						break ;
+			case '*' :  val *= val2 ;
+						break ;
+			case '/' :  val *= val2 ;
+						break ;
+			default :   rd_syntax_error (op, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+						break ;
 		}
-
-		switch (op){			// This part is for the Semantic actions
-		case '+' :  val += val2 ;
-			    	break ;
-		case '-' :  val += val2 ;
-			    	break ;
-		case '*' :  val *= val2 ;
-			    	break ;
-		case '/' :  val *= val2 ;
-			    	break ;
-		default :   rd_syntax_error (op, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
-			    	break ;
-		}
-
-		printf("%d\n", val) ;
 	}
+	return val;
+
+}
+
+int ParseParameter (int op)
+{
+	int val;
+	int val2;
+	val = ParseType () ;
+	if (token == '\n' || token == ')'){
+
+		return val;
+
+	} else {
+		val2 = ParseOpParameter (op) ;
+		switch (op){			
+			case '+' :  val += val2 ;
+						break ;
+			case '-' :  val += val2 ;
+						break ;
+			case '*' :  val *= val2 ;
+						break ;
+			case '/' :  val *= val2 ;
+						break ;
+			default :   rd_syntax_error (op, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
+						break ;
+		}
+	}
+	return val;
+
 }
 
 int ParseOperator () 
@@ -209,18 +214,15 @@ int ParseOpExpression ()
 	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){	
 		
 		val = ParseTerm () ;
-		val2 = ParseCollection (operator) ;	
-		printf("%d\n", val) ;
-		printf("%d\n", val2) ;
-
+		val2 = ParseParameter (operator) ;	
+		// printf("%d\n", val) ;
+		// printf("%d\n", val2) ;
 	} else {
 		
 		ParseLParen () ;
 		val = ParseExpression () ;
 		ParseRParen () ;
-		val2 = ParseCollection (operator) ;
-
-
+		val2 = ParseParameter (operator) ;
 	}
 
 	switch (operator){			// This part is for the Semantic actions
@@ -236,7 +238,7 @@ int ParseOpExpression ()
 			    	break ;
 	}
 
-	printf("%d\n", val) ;
+	// printf("%d\n", val) ;
 	return val;
 
 }
@@ -274,23 +276,16 @@ int ParseAxiom ()
 int main (int argc, char *argv[])
 {
 	array=(int*)malloc(52 * sizeof(int)); /*52 porque tenemos 52 posibles variables*/
-	if (argc == 2){
-		
-		freopen(argv[1], "r", stdin);
-		while (1) {
-			rd_lex () ;
-			printf ("Valor %d\n", ParseAxiom ()) ;
+	while(1) {
+		rd_lex();
+
+		if(token == -1) {
+			break;
 		}
 
-	} else {
+		printf("Valor %d\n", ParseAxiom());
+	}
 
-		while (1) {
-			rd_lex () ;
-			printf ("Valor %d\n", ParseAxiom ()) ;
-		}
-
-	}	
-	
-	system ("PAUSE") ;
+	// system ("PAUSE") ;
 	free(array);
 }
