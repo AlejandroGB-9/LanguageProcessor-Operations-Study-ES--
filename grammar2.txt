@@ -1,20 +1,19 @@
-Axioma -> Type | Equal Variable Type
-Type -> (Expression) | Parametro
+Axioma -> Type | ! Variable Type
+Type -> (Expression) | Term
 Expression -> Operando OpExpression
-OpExpression -> Parametro Parametro | (Expression)
-Parametro -> Numero | Variable | Numero OpParametro | Variable OpParametro
-OpParametro -> Variable | Numero | Parametro
-Variable -> Xvariable
-Operando -> + | - | * | / | !
-
+OpExpression -> Term Parameter | (Expression) Parameter | Term | (Expression)
+Parametro -> Term | (Expression) | Term OpParametro | (Expression) OpParametro | lambda
+OpParametro -> Term | (Expression) | Term Parametro | (Expression) Parametro | lambda
+Term -> Numero | Variable
+Operador -> + | - | * | /
 
 Simplified
 
-A -> Y | Q V Y
+A -> Y | ! V Y
 Y -> (E) | T
 E -> O E'
-E' -> P P | (E)
-P -> T | (E) | T P' | (E) P'| P'
+E' -> T P | (E) P | T | (E)
+P -> T | (E) | T P' | (E) P'| lambda
 P' -> T | (E) | T P | (E) P | lambda
 T -> N | V
 O -> + | - | * | / | !
