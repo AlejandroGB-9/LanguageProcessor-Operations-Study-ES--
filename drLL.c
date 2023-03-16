@@ -105,24 +105,6 @@ int ParseNumber()
 
 }
 
-int ParseTerm ()
-{
-	int val;
-	
-	if (token == T_NUMBER) {	
-		/*Si el valor del token leido es un numero, se ejecuta el ParseNumber() para obtener el valor de dicho numero*/
-		val = ParseNumber () ;
-		return val;
-
-	} else {
-		/*En cualquier otro caso, se tratara de una variable, por lo que se ejecuta ParseVariable() para obtener su valor*/
-		val = ParseVariable () ;
-		return val;
-
-	}
-
-}
-
 int ParseType ()
 {
 	int val;
@@ -133,53 +115,45 @@ int ParseType ()
 		ParseRParen () ;
 		return val;
 
-	} else if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){
+	} else if (token == T_NUMBER){
 
-		val = ParseTerm () ;
+		val = ParseNumber () ;
+		return val;
+
+	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')){
+		
+		val = ParseVariable () ;
 		return val;
 
 	}
-}
-
-int ParseOpParameter (int op)
-{
-	int val;
-	int val2;
-	val = ParseType () ;
-	if (token == '\n' || token == ')'){
-
-		return val;
-
-	} else {
-		val2 = ParseParameter (op) ;
-		switch (op){			
-			case '+' :  val += val2 ;
-						break ;
-			case '-' :  val += val2 ;
-						break ;
-			case '*' :  val *= val2 ;
-						break ;
-			case '/' :  val *= val2 ;
-						break ;
-			default :   rd_syntax_error (op, 0, "Unexpected error in ParseExpressionRest for operator %c\n") ;
-						break ;
-		}
-	}
-	return val;
-
 }
 
 int ParseParameter (int op)
 {
 	int val;
 	int val2;
-	val = ParseType () ;
+	if (token == T_NUMBER){
+
+		val = ParseNumber () ;
+
+	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')){
+		
+		
+		val = ParseVariable () ;
+
+	} else {
+
+		ParseLParen () ;
+		val = ParseExpression () ;
+		ParseRParen () ;
+
+	}
 	if (token == '\n' || token == ')'){
 
 		return val;
 
 	} else {
-		val2 = ParseOpParameter (op) ;
+		val2 = ParseParameter (op) ;
 		switch (op){			
 			case '+' :  val += val2 ;
 						break ;
@@ -211,13 +185,17 @@ int ParseOpExpression ()
 	int val2 ;
 	int operator ;
 
-	if (token == T_NUMBER || ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z'))){	
+	if (token == T_NUMBER){	
 		
-		val = ParseTerm () ;
+		val = ParseNumber () ;
 		val2 = ParseParameter (operator) ;	
 	
-	} else {
+	} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')){
 		
+		val = ParseVariable () ;
+		val2 = ParseParameter (operator) ;
+
+	} else {
 		ParseLParen () ;
 		val = ParseExpression () ;
 		ParseRParen () ;
@@ -241,22 +219,16 @@ int ParseOpExpression ()
 
 }
 
-int ParseAsignation()
-{
-	int val ;
-	ParseEqual () ;
-	int index = SearchIndex () ;
-	val = ParseType ();
-	array[index] = val;
-	return val;
-}
-
 int ParseExpression () 		
 {				
 	int val ;
+	int index;
 	int operator ;
 	if(token == T_OPERATOR && token_val == '!'){
-		val = ParseAsignation();
+		ParseEqual () ;
+		index = SearchIndex () ;
+		val = ParseType ();
+		array[index] = val;
 		return val;
 	}
 	else{
@@ -273,13 +245,32 @@ int ParseAxiom ()
 	int index;
 
 	if(token == T_OPERATOR && token_val == '!'){
-		val = ParseAsignation();
+		ParseEqual () ;
+		index = SearchIndex () ;
+		val = ParseType ();
+		array[index] = val;
 		return val;
 
 	} else {
 
-		val = ParseType ();
-		return val ;
+		if (token == T_NUMBER){
+
+			val = ParseNumber () ;
+			return val;
+
+		} else if ((token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z')){
+			
+			
+			val = ParseVariable () ;
+			return val;
+
+		} else {
+
+			ParseLParen () ;
+			val = ParseExpression () ;
+			ParseRParen () ;
+			return val;
+		}
 
 	}
 }
