@@ -64,7 +64,7 @@ void MatchSymbol (int expected_token)
 
 #define ParseLParen() 	MatchSymbol ('(') ; // More concise and efficient definitions
 #define ParseRParen() 	MatchSymbol (')') ; // rather than using functions
-#define ParseEqual() 	MatchSymbol ('!') ; 
+#define ParseEqual() 	MatchSymbol (T_OPERATOR) ; 
 					// This is only useful for matching Literals
 
 int SearchIndex()
