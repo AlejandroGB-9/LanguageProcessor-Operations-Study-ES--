@@ -69,7 +69,7 @@ void MatchSymbol (int expected_token)
 
 int SearchIndex()
 {
-	/*Para devolver el index de la variable en el array*/
+	/*Para devolver el index que le corresponde a la variable en el array*/
 	int ascii = token;
 	if (ascii>=65 || ascii <= 90)
 	{
@@ -80,7 +80,7 @@ int SearchIndex()
 	}
 	else if (ascii>=97 || ascii <= 122)
 	{
-		/*Letras mayusculas*/
+		/*Letras minusculas*/
 		int posicion = ascii - 97 + 26;
 		rd_lex () ;
 		return posicion;
@@ -89,15 +89,15 @@ int SearchIndex()
 
 int ParseVariable ()
 {
-	/*Para devolver el valor de una variable*/
-	int pos = SearchIndex();
-	int val = array[pos];
+	/*Esta funcion devuelve el valor de una variable en el array*/
+	int pos = SearchIndex(); //Primero se obtiene el index de la variable
+	int val = array[pos];	//Una vez obetenido el index se obtiene el valor de esa variable en el array
 	return val;
 }
 
 int ParseNumber()
 {
-
+	/*Funcion que devuelve el valor del numero leido*/
 	int val;
 	val = number ;	    // store number value to avoid losing it when reading
 	MatchSymbol (T_NUMBER) ;
@@ -110,12 +110,12 @@ int ParseTerm ()
 	int val;
 	
 	if (token == T_NUMBER) {	
-		
+		/*Si el valor del token leido es un numero, se ejecuta el ParseNumber() para obtener el valor de dicho numero*/
 		val = ParseNumber () ;
 		return val;
 
 	} else {
-
+		/*En cualquier otro caso, se tratara de una variable, por lo que se ejecuta ParseVariable() para obtener su valor*/
 		val = ParseVariable () ;
 		return val;
 
@@ -241,14 +241,31 @@ int ParseOpExpression ()
 
 }
 
-int ParseExpression () 		
-{							
+int ParseAsignation()
+{
 	int val ;
-	int operator ;
-	operator = ParseOperator () ;
-	val=ParseOpExpression () ;
+	ParseEqual () ;
+	int index = SearchIndex () ;
+	val = ParseType ();
+	array[index] = val;
 	return val;
 }
+
+int ParseExpression () 		
+{				
+	int val ;
+	int operator ;
+	if(token == T_OPERATOR && token_val == '!'){
+		val = ParseAsignation();
+		return val;
+	}
+	else{
+		operator = ParseOperator () ;
+		val=ParseOpExpression () ;
+		return val;
+	}
+}
+
 
 int ParseAxiom () 		
 {
@@ -256,10 +273,7 @@ int ParseAxiom ()
 	int index;
 
 	if(token == T_OPERATOR && token_val == '!'){
-		ParseEqual () ;
-		index = SearchIndex () ;
-		val = ParseType ();
-		array[index] = val;
+		val = ParseAsignation();
 		return val;
 
 	} else {

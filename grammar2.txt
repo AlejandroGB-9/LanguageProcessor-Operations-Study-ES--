@@ -1,6 +1,6 @@
 Axioma -> Type | ! Variable Type
 Type -> (Expression) | Term
-Expression -> Operando OpExpression
+Expression -> Operando OpExpression | ! Variable Type
 OpExpression -> Term Parameter | (Expression) Parameter | Term | (Expression)
 Parametro -> Term | (Expression) | Term OpParametro | (Expression) OpParametro | lambda
 OpParametro -> Term | (Expression) | Term Parametro | (Expression) Parametro | lambda
@@ -11,7 +11,7 @@ Simplified
 
 A -> Y | ! V Y
 Y -> (E) | T
-E -> O E'
+E -> O E' | ! V Y
 E' -> T P | (E) P | T | (E)
 P -> T | (E) | T P' | (E) P'| lambda
 P' -> T | (E) | T P | (E) P | lambda
